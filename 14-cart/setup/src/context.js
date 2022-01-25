@@ -6,13 +6,45 @@ import reducer from './reducer'
 const url = 'https://course-api.com/react-useReducer-cart-project'
 const AppContext = React.createContext()
 
+const initialState = {
+  amount: 0,
+  total: 0,
+  cart: cartItems,
+  loading: false
+}
+
 const AppProvider = ({ children }) => {
-  const [cart, setCart] = useState(cartItems)
+  const [state, dispatch] = useReducer(reducer, initialState)
+
+  const clearAll = () => {
+    dispatch({type: "CLEAR_ALL"})
+  }
+
+  const delItem = (id) => {
+    dispatch({type: "DEL_ITEM", payload: id})
+  }
+
+  const increase = (id) => {
+    dispatch({type: "INCREASE", payload: id})
+  }
+
+  const decrease = (id) => {
+    dispatch({type: "DECREASE", payload: id})
+  }
+
+  useEffect(() => {
+    dispatch({type: 'GET_TOTALS'})
+    console.log('hello');
+  }, [state.cart])
 
   return (
     <AppContext.Provider
       value={{
-        cart,
+        ...state,
+        clearAll,
+        delItem,
+        increase,
+        decrease
       }}
     >
       {children}
